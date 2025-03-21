@@ -1,10 +1,9 @@
 <template>
-    <div>
+    <span>
         {{ listing.street }},
         {{ listing.street_nr }},
-        for ${{ listing.price }},
         {{ listing.city }}
-    </div>
+    </span>
 </template>
 
 <script setup>

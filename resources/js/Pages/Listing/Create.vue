@@ -1,8 +1,8 @@
 <template>
     <form @submit.prevent="create">
-        <div>
-            <div>
-                <label>Beds</label>
+        <div class="bg-red-200">
+            <div class="bg-red-200">
+                <label class="text-3xl font-bold">Beds</label>
                 <input type="text" v-model.number="form.beds" @input="form.clearErrors('beds')" />
                 <div v-if="form.errors.beds">
                     {{ form.errors.beds }}
