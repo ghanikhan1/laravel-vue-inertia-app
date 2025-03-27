@@ -8,6 +8,12 @@ use Inertia\Inertia;
 
 class ListingController extends Controller
 {
+// we can apply middleware here in counstructor as well but we applied in routes
+//    public function __construct()
+//    {
+//        $this->middleware('auth')->except(['index', 'show']);
+//    }
+
     /**
      * Display a listing of the resource.
      */
