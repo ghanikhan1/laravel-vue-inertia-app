@@ -11,14 +11,14 @@
                 </div>
                 <div class="text-lg font-medium">
                     <Link :href="route('listing.create')"
-                          class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium p-2 rounded-lg">+ New Listing
+                          class="main-button">+ New Listing
                     </Link>
                 </div>
             </nav>
         </div>
     </header>
 
-    <main class="container mx-auto p-4">
+    <main class="container mx-auto p-4 w-full">
         <div v-if="flashSuccess"
              class="mb-4 border rounded-md shadow-sm border-green-300 dark:border-green-800 bg-green-100 dark:bg-green-900 p-2">
             {{ flashSuccess }}
