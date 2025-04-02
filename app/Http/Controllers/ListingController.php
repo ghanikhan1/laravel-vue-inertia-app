@@ -4,19 +4,118 @@ namespace App\Http\Controllers;
 
 use App\Models\Listing;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Termwind\Components\Li;
+
 
 class ListingController extends Controller
 {
+    use AuthorizesRequests;
+
+    public function __construct()
+    {
+        $this->authorizeResource(Listing::class, 'listing');
+    }
+
+// we can apply middleware here in counstructor as well but we applied in routes
+//    public function __construct()
+//    {
+//        $this->middleware('auth')->except(['index', 'show']);
+//    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $filters = $request->only([
+            'priceFrom',
+            'priceTo',
+            'beds',
+            'baths',
+            'areaFrom',
+            'areaTo',
+        ]);
+
+        $query = Listing::orderByDesc('created_at')->when(
+            $filters['priceFrom'] ?? false,
+        fn($query, $value) => $query->where('price', '>=', $value)
+        )->when(
+            $filters['priceTo'] ?? false,
+            fn($query, $value) => $query->where('price', '<=', $value)
+        )->when(
+            $filters['beds'] ?? false,
+            fn($query, $value) => $query->where('beds', (int)$value < 5 ? '=' : '>=' , $value)
+        )->when(
+            $filters['baths'] ?? false,
+            fn($query, $value) => $query->where('baths', (int)$value < 5 ? '=' : '>=' ,$value)
+        )->when(
+            $filters['areaFrom'] ?? false,
+            fn($query, $value) => $query->where('area', '>=', $value)
+        )->when(
+            $filters['areaTo'] ?? false,
+            fn($query, $value) => $query->where('area', '<=', $value)
+        )->when(
+            $filters['areaTo'] ?? false,
+            fn($query, $value) => $query->where('area', '<=', $value)
+        );
+
+//        if ($filters['priceFrom'] ?? false) {
+//            $query->where('price', '>=', $filters['priceFrom']);
+//        }
+
+//        if ($filters['priceTo'] ?? false) {
+//            $query->where('price', '<=', $filters['priceTo']);
+//        }
+
+//        if ($filters['beds'] ?? false) {
+//            $query->where('beds', $filters['beds']);
+//        }
+
+//        if ($filters['baths'] ?? false) {
+//            $query->where('baths', $filters['baths']);
+//        }
+
+//        if ($filters['areaFrom'] ?? false) {
+//            $query->where('area', '>=', $filters['areaFrom']);
+//        }
+
+//        if ($filters['areaTo'] ?? false) {
+//            $query->where('area', '<=', $filters['areaTo']);
+//        }
+
         return Inertia(
             'Listing/Index',
             [
-                'listings' => Listing::all()
+                'filters' => $filters,
+
+//                'listings' => $query->paginate(10)->withQueryString()
+
+                'listings' => Listing::orderByDesc('created_at')->when(
+                    $filters['priceFrom'] ?? false,
+                    fn($query, $value) => $query->where('price', '>=', $value)
+                )->when(
+                    $filters['priceTo'] ?? false,
+                    fn($query, $value) => $query->where('price', '<=', $value)
+                )->when(
+                    $filters['beds'] ?? false,
+                    fn($query, $value) => $query->where('beds', (int)$value < 5 ? '=' : '>=' , $value)
+                )->when(
+                    $filters['baths'] ?? false,
+                    fn($query, $value) => $query->where('baths', (int)$value < 5 ? '=' : '>=' ,$value)
+                )->when(
+                    $filters['areaFrom'] ?? false,
+                    fn($query, $value) => $query->where('area', '>=', $value)
+                )->when(
+                    $filters['areaTo'] ?? false,
+                    fn($query, $value) => $query->where('area', '<=', $value)
+                )->when(
+                    $filters['areaTo'] ?? false,
+                    fn($query, $value) => $query->where('area', '<=', $value)
+                )->paginate(10)->withQueryString()
+
             ]
         );
     }
@@ -26,6 +125,7 @@ class ListingController extends Controller
      */
     public function create()
     {
+//        $this->authorize('create', Listing::class);
         return Inertia('Listing/Create');
     }
 
@@ -34,7 +134,7 @@ class ListingController extends Controller
      */
     public function store(Request $request)
     {
-        Listing::create(
+        $request->user()->listings()->create(
             $request->validate([
                 'beds' => 'required|integer|min:0|max:20',
                 'baths' => 'required|integer|min:0|max:20',
@@ -54,6 +154,14 @@ class ListingController extends Controller
      */
     public function show(Listing $listing)
     {
+
+
+//        if ( Auth::user()->cannot('view', $listing)){
+//            abort(403);
+//        }
+
+//        $this->authorize('view', $listing);
+
         return Inertia(
             'Listing/Show',
             [
