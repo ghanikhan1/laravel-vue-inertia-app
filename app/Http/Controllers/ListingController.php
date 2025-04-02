@@ -39,28 +39,32 @@ class ListingController extends Controller
             'areaTo',
         ]);
 
-        $query = Listing::orderByDesc('created_at')->when(
-            $filters['priceFrom'] ?? false,
-        fn($query, $value) => $query->where('price', '>=', $value)
-        )->when(
-            $filters['priceTo'] ?? false,
-            fn($query, $value) => $query->where('price', '<=', $value)
-        )->when(
-            $filters['beds'] ?? false,
-            fn($query, $value) => $query->where('beds', (int)$value < 5 ? '=' : '>=' , $value)
-        )->when(
-            $filters['baths'] ?? false,
-            fn($query, $value) => $query->where('baths', (int)$value < 5 ? '=' : '>=' ,$value)
-        )->when(
-            $filters['areaFrom'] ?? false,
-            fn($query, $value) => $query->where('area', '>=', $value)
-        )->when(
-            $filters['areaTo'] ?? false,
-            fn($query, $value) => $query->where('area', '<=', $value)
-        )->when(
-            $filters['areaTo'] ?? false,
-            fn($query, $value) => $query->where('area', '<=', $value)
-        );
+//        $query = Listing::orderByDesc('created_at')->when(
+//            $filters['priceFrom'] ?? false,
+//        fn($query, $value) => $query->where('price', '>=', $value)
+//        )->when(
+//            $filters['priceTo'] ?? false,
+//            fn($query, $value) => $query->where('price', '<=', $value)
+//        )->when(
+//            $filters['beds'] ?? false,
+//            fn($query, $value) => $query->where('beds', (int)$value < 5 ? '=' : '>=' , $value)
+//        )->when(
+//            $filters['baths'] ?? false,
+//            fn($query, $value) => $query->where('baths', (int)$value < 5 ? '=' : '>=' ,$value)
+//        )->when(
+//            $filters['areaFrom'] ?? false,
+//            fn($query, $value) => $query->where('area', '>=', $value)
+//        )->when(
+//            $filters['areaTo'] ?? false,
+//            fn($query, $value) => $query->where('area', '<=', $value)
+//        )->when(
+//            $filters['areaTo'] ?? false,
+//            fn($query, $value) => $query->where('area', '<=', $value)
+//        );
+
+
+        //Above is first and below is Second way to do this query
+
 
 //        if ($filters['priceFrom'] ?? false) {
 //            $query->where('price', '>=', $filters['priceFrom']);
@@ -93,29 +97,34 @@ class ListingController extends Controller
 
 //                'listings' => $query->paginate(10)->withQueryString()
 
-                'listings' => Listing::orderByDesc('created_at')->when(
-                    $filters['priceFrom'] ?? false,
-                    fn($query, $value) => $query->where('price', '>=', $value)
-                )->when(
-                    $filters['priceTo'] ?? false,
-                    fn($query, $value) => $query->where('price', '<=', $value)
-                )->when(
-                    $filters['beds'] ?? false,
-                    fn($query, $value) => $query->where('beds', (int)$value < 5 ? '=' : '>=' , $value)
-                )->when(
-                    $filters['baths'] ?? false,
-                    fn($query, $value) => $query->where('baths', (int)$value < 5 ? '=' : '>=' ,$value)
-                )->when(
-                    $filters['areaFrom'] ?? false,
-                    fn($query, $value) => $query->where('area', '>=', $value)
-                )->when(
-                    $filters['areaTo'] ?? false,
-                    fn($query, $value) => $query->where('area', '<=', $value)
-                )->when(
-                    $filters['areaTo'] ?? false,
-                    fn($query, $value) => $query->where('area', '<=', $value)
-                )->paginate(10)->withQueryString()
+//                'listings' => Listing::mostRecent()->when(
+//                    $filters['priceFrom'] ?? false,
+//                    fn($query, $value) => $query->where('price', '>=', $value)
+//                )->when(
+//                    $filters['priceTo'] ?? false,
+//                    fn($query, $value) => $query->where('price', '<=', $value)
+//                )->when(
+//                    $filters['beds'] ?? false,
+//                    fn($query, $value) => $query->where('beds', (int)$value < 5 ? '=' : '>=' , $value)
+//                )->when(
+//                    $filters['baths'] ?? false,
+//                    fn($query, $value) => $query->where('baths', (int)$value < 5 ? '=' : '>=' ,$value)
+//                )->when(
+//                    $filters['areaFrom'] ?? false,
+//                    fn($query, $value) => $query->where('area', '>=', $value)
+//                )->when(
+//                    $filters['areaTo'] ?? false,
+//                    fn($query, $value) => $query->where('area', '<=', $value)
+//                )->when(
+//                    $filters['areaTo'] ?? false,
+//                    fn($query, $value) => $query->where('area', '<=', $value)
+//                )->paginate(10)->withQueryString()
 
+
+                'listings' => Listing::mostRecent()
+                    ->filter($filters)
+                    ->paginate(10)
+                    ->withQueryString()
             ]
         );
     }
