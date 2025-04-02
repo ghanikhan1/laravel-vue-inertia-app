@@ -211,14 +211,4 @@ class ListingController extends Controller
 
         return redirect()->route('listing.index')->with('success', 'Listing was updated');
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Listing $listing)
-    {
-        $listing->delete();
-
-        return redirect()->back()->with('success', 'Listing was deleted!');
-    }
 }
